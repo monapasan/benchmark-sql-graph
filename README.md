@@ -38,3 +38,24 @@ curl localhost:3000/user
 ```
 
 Should return empty `[]` as there is no users in the database yet.
+
+Create a new user:
+
+```sj
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"user": {"username":"testuser"}}' \
+  http://localhost:3000/user
+```
+
+Check if it has been created:
+
+```sh
+curl localhost:3000/user
+```
+
+Should return something like:
+
+```js
+[{"id":"c5dcf587-b164-4565-98a5-819283369e01","username":"testuser"}]%
+```
