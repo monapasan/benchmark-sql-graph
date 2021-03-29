@@ -1,3 +1,40 @@
 **What?**
 
-Get all the nodes (Concepts) of a graph and the relations between them (with "statement", "context" and "timeline" properties)
+SQL benchmark. Process raw text and get all the nodes (Concepts) of a graph and the relations between them (with "statement", "context" and "timeline" properties)
+
+Install npm moduels with `yarn` in the root folder.
+
+### Create database
+
+```sh
+yarn start:dev:db
+```
+
+This will create a docker instance with PostgreSQL needed for a successuful start of the server.
+Make sure your docker is up and running.
+
+### Run migrations
+
+```sh
+yarn typeorm:migration:run
+```
+
+This will execute migrations based on the models defined in `src/models`. For now it will create 4 tables: User, Context, Statement and migrations(not application related table, to keep track of the migrations).
+
+### Start the server in the watch mode
+
+```
+yarn start:dev
+```
+
+This will start nestjs server.
+
+### Try it out
+
+Get all of the current user from database:
+
+```sh
+curl localhost:3000/user
+```
+
+Should return empty `[]` as there is no users in the database yet.
