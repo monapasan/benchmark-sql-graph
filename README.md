@@ -21,6 +21,22 @@ yarn typeorm:migration:run
 
 This will execute migrations based on the models defined in `src/models`. For now it will create 4 tables: User, Context, Statement and migrations(not application related table, to keep track of the migrations).
 
+### Check the database access
+
+(Optional) If we are using PostreSQL, we can connect to it directly via Terminal to verify the tables that have been created:
+
+```sh
+docker exec -it my_database_server psql -U postgres
+```
+
+Then, once in Docker, run:
+
+`\list` to list all the databases
+`\c my_database` to change to the database called `my_database`
+`\dt` or `\d+` to list the tables
+`SELECT * FROM table_name;` to get all the rows of a table
+
+
 ### Start the server in the watch mode
 
 ```
