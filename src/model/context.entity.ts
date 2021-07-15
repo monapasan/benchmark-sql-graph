@@ -27,5 +27,6 @@ export class Context {
   CreationDate: Date;
 
   @OneToMany(() => Statement, (statement) => statement.ContextId)
+  @JoinColumn()
   statements: Statement[];
 }

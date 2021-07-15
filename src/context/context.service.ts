@@ -18,26 +18,39 @@ export class ContextService {
 
     @InjectRepository(Statement)
     private readonly statementRepository: Repository<Statement>,
+
   ) {}
 
   async findAll(query): Promise<ContextsRO> {
-    const qb = await getRepository(Context).createQueryBuilder('context');
+    const qb = await this.contextRepository.createQueryBuilder('context');
 
+    // Building the query: sort the data returned by creationDate desc
     qb.orderBy('context.CreationDate', 'DESC');
 
     const contextsCount = await qb.getCount();
 
+    // Add a limit
     if ('limit' in query) {
       qb.limit(query.limit);
     }
 
+    // Execute the DB query
     const contexts = await qb.getMany();
 
     return { contexts, contextsCount };
   }
 
   async createContext(contextData: CreateContextDto): Promise<ContextRO> {
+
     const context = new Context();
+
+    const userEntity = await this.userRepository.findOne(contextData.user)
+
+    context.contextName = contextData.name;
+    context.statements = [];
+    context.UserId = userEntity;
+    
+    const contextEntity = await this.contextRepository.save(context);
 
     const statements = contextData.body
       .split('\n')
@@ -45,15 +58,16 @@ export class ContextService {
 
     const statementEntities = statements.map((statementBody) => {
       const statementEntity = new Statement();
-      statementEntity.ContextId = context;
+      statementEntity.ContextId = contextEntity;
       statementEntity.content = statementBody;
       this.statementRepository.save(statementEntity);
       return statementEntity;
     });
 
-    context.contextName = contextData.name;
-    context.statements = statementEntities;
-    this.contextRepository.save(context);
+    // contextEntity.statements = statementEntities;
+    // await this.contextRepository.save(contextEntity);
+
+
     return { context };
   }
 }
