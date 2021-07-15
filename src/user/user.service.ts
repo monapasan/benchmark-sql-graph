@@ -9,18 +9,19 @@ import { UserRO } from './user.interface';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) private readonly repo: Repository<User>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
   // abstracting access to the model via service
   public async getAll() {
     // getting data from database
-    return await this.repo.find();
+    return await this.userRepository.find();
   }
 
   // abstracting access to the model via service
   public async get(id: string) {
-    const user = await this.repo.findOne(id);
+    const user = await this.userRepository.findOne(id);
+    console.log('userid', id)
     if (!user) {
       const errors = { User: ' not found' };
       throw new HttpException({ errors }, 401);
@@ -30,7 +31,7 @@ export class UserService {
   }
 
   public async getByName(name: string) {
-    const user = await this.repo.findOne({ username: name });
+    const user = await this.userRepository.findOne({ username: name });
     if (!user) {
       const errors = { User: ' not found' };
       throw new HttpException({ errors }, 401);
@@ -42,7 +43,7 @@ export class UserService {
   async create(dto: CreateUserDto): Promise<UserRO> {
     // check uniqueness of username/email
     const { username } = dto;
-    const qb = await getRepository(User)
+    const qb = await this.userRepository // getRepository(User)
       .createQueryBuilder('user')
       .where('user.username = :username', { username });
 
@@ -69,7 +70,7 @@ export class UserService {
         HttpStatus.BAD_REQUEST,
       );
     } else {
-      const savedUser = await this.repo.save(newUser);
+      const savedUser = await this.userRepository.save(newUser);
       return this.buildUserRO(savedUser);
     }
   }

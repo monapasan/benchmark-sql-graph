@@ -14,7 +14,7 @@ import { CreateUserDto } from './user.dto';
 
 @Controller('user')
 export class UserController {
-  constructor(private serv: UserService) {}
+  constructor(private readonly serv: UserService) {}
 
   @Get()
   public async getAll(): Promise<User[]> {
@@ -30,7 +30,7 @@ export class UserController {
 
   @UsePipes(new ValidationPipe())
   @Post()
-  public async create(@Body('user') userData: CreateUserDto) {
+  public async create(@Body('user') userData: CreateUserDto): Promise<UserRO> {
     return await this.serv.create(userData);
   }
 }
